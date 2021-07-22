@@ -18,7 +18,12 @@ public class SHDriver {
     }
 
     public void setCwd(String input) {
-        System.setProperty("user.dir", input);
+        System.setProperty("user.dir", input.split(" ")[1]);
+        updateCWD();
+    }
+
+    private void updateCWD() {
+        this.cwd = System.getProperty("user.dir");
     }
 
     public String getCwd() {
