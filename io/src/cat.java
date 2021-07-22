@@ -14,21 +14,21 @@ public class cat {
             //Import the file into the program
             File file = new File(args[0]);
             BufferedReader fileReader = new BufferedReader(new FileReader(file));
-
-
             int counter = 1;
             Scanner input = new Scanner(System.in);
             //Start printing the file to the console.
             while (fileReader.ready()) {
                 if (counter % 30 == 0) {
-                    System.out.println("----------Press Enter to Continue----------");
+                    System.out.println("----------Press Any Key to Continue----------"); //Need to make it acept enter
 //                    while (!KeyStroke.getKeyStroke('q').isOnKeyRelease()) {
 //                    }
-                    input.next();
+                    input.next("\n");
                 }
                 System.out.println(fileReader.readLine());
                 counter++;
             }
+            input.close();
+            fileReader.close();
         } catch (IOException ex) {
             System.out.println("Something went wrong " + ex.getMessage());
         }
