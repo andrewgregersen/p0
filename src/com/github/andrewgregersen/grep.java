@@ -1,9 +1,13 @@
+package com.github.andrewgregersen;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 
 public class grep {
+
+
     public static void main(String[] args) {
         if (args.length < 2)
             throw new IllegalArgumentException("Usage: [document] document to search, [term] search term, [-s] case sensitive");

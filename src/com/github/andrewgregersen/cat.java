@@ -1,19 +1,19 @@
+package com.github.andrewgregersen;
+
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class cat {
 
-    public static void main(String[] args) {
-        if (args.length == 0)
-            throw new IllegalArgumentException("Usage: [path]");
+    public void printDocument(String path) {
         try {
-
             //Import the file into the program
-            File file = new File(args[0]);
-            BufferedReader fileReader = new BufferedReader(new FileReader(file));
+            Path file = Paths.get(path).toAbsolutePath().normalize();
+            BufferedReader fileReader = new BufferedReader(new FileReader(file.toFile()));
             int counter = 1;
             Scanner input = new Scanner(System.in);
             //Start printing the file to the console.
@@ -29,9 +29,10 @@ public class cat {
             }
             input.close();
             fileReader.close();
-        } catch (IOException ex) {
+        } catch (
+                IOException ex) {
             System.out.println("Something went wrong " + ex.getMessage());
         }
-
     }
 }
+
