@@ -1,7 +1,7 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.andrewgregersen</groupId>
-    <artifactId>ResearchUtil</artifactId>
+    <artifactId>AndrewsShell</artifactId>
     <version>1.0.0</version>
     <build>
         <plugins>

@@ -1,6 +1,3 @@
-package com.github.andrewgregersen;
-
-
 import java.nio.file.InvalidPathException;
 import java.util.Scanner;
 
@@ -39,6 +36,9 @@ public class ASH {
             }
         } catch (InvalidPathException ex) {
             System.err.println("Something went wrong: " + ex.getMessage());
+        } catch (ErrException ex) {
+            System.err.println(ex.getMessage());
         }
+
     }
 }
