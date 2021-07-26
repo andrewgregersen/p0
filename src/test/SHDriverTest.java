@@ -23,33 +23,33 @@ public class SHDriverTest {
 
     @Test
     public void changeDirectoryTest1() throws ErrException {
-        String expected = Paths.get(System.getProperty("user.dir")).getParent().toString();
+        String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd(expected);
-        String actual = System.getProperty("user.dir");
+        String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void changeDirectoryTest2() throws ErrException {
-        String expected = Paths.get(System.getProperty("user.dir")).getParent().toString();
+        String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd("../");
-        String actual = System.getProperty("user.dir");
+        String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void changeDirectoryTest3() throws ErrException {
-        String expected = Paths.get(System.getProperty("user.dir")).getParent().toString();
+        String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd("../../");
-        String actual = System.getProperty("user.dir");
+        String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void changeDirectoryTest4() throws ErrException {
-        String expected = Paths.get(System.getProperty("user.dir")).getParent().toString();
+        String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd("../p0");
-        String actual = System.getProperty("user.dir");
+        String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
         Assert.assertEquals(expected, actual);
     }
 

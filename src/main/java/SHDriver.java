@@ -38,7 +38,7 @@ public class SHDriver {
             throw new ErrException("Usage: [path] -> path to new working directory");
         try {
             String path = pathBuilder(input);
-            if (!Paths.get(path).toAbsolutePath().toFile().isDirectory()) //make sure that the file actually exists and is a directory.
+            if (!Paths.get(path).toAbsolutePath().toFile().exists()) //make sure that the file actually exists and is a directory.
                 throw new FileNotFoundException();
             else {
                 String old = System.setProperty("user.dir", path);
@@ -53,37 +53,37 @@ public class SHDriver {
     }
 
     private String pathBuilder(String s) throws InvalidPathException {
+        //if the path is just a reference to the parent directory, return the parent.
         if (s.equalsIgnoreCase("../"))
             return Paths.get(cwd).getParent().toAbsolutePath().normalize().toString(); //user just wants the parent directory
+
+
         Path path = Paths.get(cwd).toAbsolutePath().normalize();
-        String[] frags = s.split("/|\\\\");
+        String[] frags = s.replaceAll("\\\\", "/").split("/");
         StringBuilder builder = new StringBuilder();
         boolean ok = true;
+
+
+        //iterate through the new pathway
         for (String f : frags) {
-            if (f.equals("../") && ok)
+            if (f.equals("..") && ok)
                 path = Paths.get(path.toString()).toAbsolutePath().getParent(); //get the parent directory
             else {
                 if (f.contains(":")) {
-                    f = f.replace(":", "").trim();
-                }
-                if (ok) { //there is no more ../ in the path
+                    builder.append(f.trim()).append("\\");
                     ok = false;
-                    builder.append(path.toString());
-                }
-                if (f.equals("../"))//some one was being cheeky
+                    continue;
+                } else if (ok) { //there is no more ../ in the path
+                    ok = false;
+                    builder.append(path.toString()).append("\\");
+                } else if (f.equals("../"))//some one was being cheeky
                     throw new InvalidPathException(f, "You had ../ in the middle of a path!");
-                builder.append("/").append(f); //otherwise just keep making the new path
+                builder.append(f.trim()).append("\\"); //otherwise just keep making the new path
             }
         }
+        if (builder.length() == 0) //the only path passed in directed to a parent folder.
+            builder.append(path.toAbsolutePath().normalize().toString());
         return builder.toString(); //return the new pathway
-
-//        if (split[0].equals(".."))
-//            path = path.getParent().normalize();
-//        for (int x = 0; x < split.length - 1; x++) {
-//            if (split[x].contains("..")) {
-//                path = path.getParent().normalize();
-//                s.append(path.toString());
-//            } else path = Paths.get(path.toAbsolutePath().toString().concat("/" + split[x]));
     }
 
 
