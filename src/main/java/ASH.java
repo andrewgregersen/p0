@@ -1,5 +1,8 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.InvalidPathException;
-import java.util.Scanner;
 
 
 /**
@@ -13,10 +16,10 @@ public class ASH {
 
         SHDriver driver = new SHDriver();
         String input;
-        try (Scanner stdin = new Scanner(System.in)) {
+        try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) { //have the program run until the user exits the shell
                 System.out.print("$:> ");
-                input = stdin.nextLine();
+                input = stdin.readLine();
                 if (input.toLowerCase().startsWith("exit"))//check to see if the user wants to exit the shell
                     break;
                 else if (input.toLowerCase().startsWith("cd")) //check to see if the user wants to change their directory
@@ -26,18 +29,19 @@ public class ASH {
                 else if (input.toLowerCase().startsWith("cat"))
                     driver.runCat(input);
                 else if (input.toLowerCase().startsWith("grep"))
-                    driver.runGrep(input);
+                    driver.runGrep();
                 else if (input.toLowerCase().startsWith("analyze"))
                     driver.runAnalyzer(input);
                 else if (input.toLowerCase().startsWith("ls"))
                     driver.ls(input);
                 else driver.runOther(input);
-
             }
-        } catch (InvalidPathException ex) {
+        } catch (InvalidPathException | FileNotFoundException ex) {
             System.err.println("Something went wrong: " + ex.getMessage());
-        } catch (ErrException ex) {
+        } catch (UsageException ex) {
             System.err.println(ex.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }

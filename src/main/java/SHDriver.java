@@ -5,11 +5,12 @@ import java.io.FileNotFoundException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
-class ErrException extends Exception {
+class UsageException extends Exception {
     private final String message;
 
-    public ErrException(String Message) {
+    public UsageException(String Message) {
         this.message = Message;
     }
 
@@ -24,6 +25,9 @@ public class SHDriver {
     private String cwd;
     private Logger logger;
 
+    /**
+     * Creates an instance of the Shell in memory, only have to init the current working directory from the system
+     */
     public SHDriver() {
         this.cwd = getWorkingDirectory();
     }
@@ -32,10 +36,27 @@ public class SHDriver {
         return System.getProperty("user.dir");
     }
 
-    public void setCwd(String input) throws ErrException {
+    private String updateCWD() {
+        this.cwd = System.getProperty("user.dir");
+        return cwd;
+    }
+
+    public String getCwd() {
+        return cwd;
+    }
+
+    public void printWorkingDirectory() {
+        System.out.println(cwd);
+    }
+
+    /**
+     * @param input: The users input, contains the keyword CD, and a path to a new working directory
+     * @throws UsageException: An exception that shows simply shows the usage of the command.
+     */
+    public void setCwd(String input) throws UsageException {
         input = input.replace("cd", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
-            throw new ErrException("Usage: [path] -> path to new working directory");
+            throw new UsageException("Usage: [path] -> path to new working directory");
         try {
             String path = pathBuilder(input);
             if (!Paths.get(path).toAbsolutePath().toFile().exists()) //make sure that the file actually exists and is a directory.
@@ -45,17 +66,25 @@ public class SHDriver {
                 System.out.println("Moved from " + old + " to-> " + updateCWD()); //print out the change in working directory
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("ASH: File does not exist!");
+            System.err.println("ASH: File does not exist!");
         } catch (InvalidPathException ex) {
-            System.out.println("ASH: Path was mangled/malformed!");
-            System.out.println(ex.getMessage());
+            System.err.println("ASH: Path was mangled/malformed!");
+            System.err.println(ex.getMessage());
         }
     }
 
+
+    /**
+     * @param s: The path to the new Working Directory.
+     * @return A new String that represents the new working directory
+     * @throws InvalidPathException: The path passed by the user is trying to access a parent of a child they are asking of
+     */
     private String pathBuilder(String s) throws InvalidPathException {
         //if the path is just a reference to the parent directory, return the parent.
         if (s.equalsIgnoreCase("../"))
             return Paths.get(cwd).getParent().toAbsolutePath().normalize().toString(); //user just wants the parent directory
+        if (s.equalsIgnoreCase("~"))
+            return System.getProperty("user.home");
 
 
         Path path = Paths.get(cwd).toAbsolutePath().normalize();
@@ -86,30 +115,64 @@ public class SHDriver {
         return builder.toString(); //return the new pathway
     }
 
-
-    private String updateCWD() {
-        this.cwd = System.getProperty("user.dir");
-        return cwd;
+    /**
+     * Cat is a small script that prints a document out to the console a handfull of lines at a time.
+     *
+     * @param input
+     * @throws FileNotFoundException
+     * @throws UsageException
+     */
+    public void runCat(String input) throws FileNotFoundException, UsageException {
+        input = input.replace("cat", "").strip().replaceAll("\"", "").strip();
+        if (input.length() == 0)
+            throw new UsageException("Usage: [path] -> path to file");
+        String path = pathBuilder(input);
+        if (Paths.get(path).toAbsolutePath().normalize().toFile().exists())
+            cat.printDocument(path);
+        else throw new FileNotFoundException("This file does not exist!");
     }
 
-    public String getCwd() {
-        return cwd;
+    /**
+     * Grep is small script that searches for and prints out all occurances of a given phrase or search term.
+     *
+     * @throws UsageException:        An error to show the usage of a the command
+     * @throws FileNotFoundException: The file that we are trying to search does not exist.
+     */
+    public void runGrep() throws UsageException, FileNotFoundException {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Please enter file pathway: ");
+        String path = scanner.nextLine();
+        System.out.println("Please enter the search term");
+        String term = scanner.nextLine();
+        System.out.println("Case Sensitive? Y/N");
+        boolean sensitive;
+        if (scanner.next("Y|N").equalsIgnoreCase("n"))
+            sensitive = false;
+        else sensitive = true;
+        grep.runGrep(pathBuilder(path), term, sensitive);
+
+
     }
 
-    public void printWorkingDirectory() {
-        System.out.println(cwd);
-    }
+    /**
+     * runAnalyzer runs the analyzer script for a document. This provides a break down of all words in the document
+     * sorted by the number of times that they have appeard.
+     *
+     * @param input: The path to the document to breakdown
+     * @throws UsageException:        An exception to show how to use the command
+     * @throws FileNotFoundException: The file either does not exist or is not located at this location.
+     */
 
-    public void runCat(String input) {
-
-    }
-
-    public void runGrep(String input) {
-
-
-    }
-
-    public void runAnalyzer(String input) {
+    public void runAnalyzer(String input) throws UsageException, FileNotFoundException {
+        input = input.replace("analyze", "").strip().replaceAll("\"", "").strip();
+        if (input.length() == 0)
+            throw new UsageException("Usage: [path] -> path to document to break down");
+        String path = pathBuilder(input);
+        if (Paths.get(path).toAbsolutePath().normalize().toFile().exists())
+            analyzer.runAnalyzer(path);
+        else throw new FileNotFoundException("This file does not exist!");
 
     }
 
@@ -119,7 +182,7 @@ public class SHDriver {
      * @param input: user given path
      */
     public void ls(String input) throws InvalidPathException, NullPointerException {
-        if (input.strip().length() == 2) {
+        if (input.strip().length() == 2) { //the user only passed in the chars "ls"
             Path cwd = Paths.get(this.cwd);
             File[] f = cwd.toFile().listFiles();
             assert f != null;

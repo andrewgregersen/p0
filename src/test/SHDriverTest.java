@@ -22,7 +22,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest1() throws ErrException {
+    public void changeDirectoryTest1() throws UsageException {
         String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd(expected);
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
@@ -30,7 +30,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest2() throws ErrException {
+    public void changeDirectoryTest2() throws UsageException {
         String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd("../");
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
@@ -38,7 +38,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest3() throws ErrException {
+    public void changeDirectoryTest3() throws UsageException {
         String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd("../../");
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
@@ -46,7 +46,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest4() throws ErrException {
+    public void changeDirectoryTest4() throws UsageException {
         String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.setCwd("../p0");
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
@@ -54,8 +54,11 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest5() {
-        SHDriver driver = new SHDriver();
+    public void changeDirectoryTest5() throws UsageException {
+        String expected = Paths.get(System.getProperty("user.home")).normalize().toString();
+        driver.setCwd("~");
+        String actual = Paths.get(System.getProperty("user.home")).normalize().toString();
+        Assert.assertEquals(expected, actual);
 
     }
 
