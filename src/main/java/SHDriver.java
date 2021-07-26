@@ -122,6 +122,7 @@ public class SHDriver {
         if (input.strip().length() == 2) {
             Path cwd = Paths.get(this.cwd);
             File[] f = cwd.toFile().listFiles();
+            assert f != null;
             for (File file : f) {
                 System.out.println(file.getName());
             }

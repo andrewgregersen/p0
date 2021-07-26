@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class cat {
 
-    public void printDocument(String path) {
+    public static void printDocument(String path) {
         try {
             //Import the file into the program
             Path file = Paths.get(path).toAbsolutePath().normalize();
@@ -17,7 +17,7 @@ public class cat {
             //Start printing the file to the console.
             while (fileReader.ready()) {
                 if (counter % 30 == 0) {
-                    System.out.println("----------Press Any Key to Continue----------"); //Need to make it acept enter
+                    System.out.println("----------Press Any Key to Continue----------"); //Need to make it accept enter
 //                    while (!KeyStroke.getKeyStroke('q').isOnKeyRelease()) {
 //                    }
                     input.next("\n");
