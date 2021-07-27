@@ -8,11 +8,11 @@ import java.util.TreeMap;
 
 public class analyzer {
 
-    public static void main(String[] args) {
-        if (args.length == 0)
-            throw new IllegalArgumentException("Usage: [path] path to file");
+    public static void runAnalyzer(String path) {
         try {
-            Map<String, Integer> termMap = getTerms(args[0]);
+
+            //Files.lines(Paths.get(path)).map(it -> it.split(" ")).forEach(it -> new TreeMap<String, Integer>().put(Arrays.toString(it), ((int) Arrays.stream(it).count())));
+            TreeMap<String, Integer> termMap = (TreeMap<String, Integer>) getTerms(path);
             System.out.println("Term : Occurrences");
             Set<String> keys = termMap.keySet();
             for (String key : keys) {
