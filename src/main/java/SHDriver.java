@@ -1,5 +1,3 @@
-import org.apache.logging.log4j.Logger;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.InvalidPathException;
@@ -23,7 +21,6 @@ class UsageException extends Exception {
 public class SHDriver {
 
     private String cwd;
-    private Logger logger;
 
     /**
      * Creates an instance of the Shell in memory, only have to init the current working directory from the system
@@ -128,7 +125,7 @@ public class SHDriver {
             throw new UsageException("Usage: [path] -> path to file");
         String path = pathBuilder(input);
         if (Paths.get(path).toAbsolutePath().normalize().toFile().exists())
-            cat.printDocument(path);
+            DocumentMethods.cat(path);
         else throw new FileNotFoundException("This file does not exist!");
     }
 
@@ -142,16 +139,16 @@ public class SHDriver {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Please enter file pathway: ");
+        System.out.print("Please enter file pathway: ");
         String path = scanner.nextLine();
-        System.out.println("Please enter the search term");
+        System.out.print("Please enter the search term: ");
         String term = scanner.nextLine();
-        System.out.println("Case Sensitive? Y/N");
+        System.out.print("Case Sensitive? Y/N: ");
         boolean sensitive;
-        if (scanner.next("Y|N").equalsIgnoreCase("n"))
-            sensitive = false;
-        else sensitive = true;
-        grep.runGrep(pathBuilder(path), term, sensitive);
+        if (scanner.nextLine().equalsIgnoreCase("y"))
+            sensitive = true;
+        else sensitive = false;
+        DocumentMethods.grep(pathBuilder(path), term, sensitive);
 
 
     }
@@ -204,6 +201,18 @@ public class SHDriver {
             }
         }
     }
+
+    /**
+     * Static command help, simply gives a brief list of commands that are built into the system.
+     */
+
+    public void help(String input) {
+        if (input.length() == 4) {
+
+        }
+        input = input.replace("ls", "").strip();
+    }
+
 
     /**
      * Tells the computer OS to run a user-defined program with all vars attached to it

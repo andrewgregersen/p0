@@ -20,20 +20,22 @@ public class ASH {
             while (true) { //have the program run until the user exits the shell
                 System.out.print("$:> ");
                 input = stdin.readLine();
-                if (input.toLowerCase().startsWith("exit"))//check to see if the user wants to exit the shell
+                if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
                     break;
-                else if (input.toLowerCase().startsWith("cd")) //check to see if the user wants to change their directory
+                else if (input.toLowerCase().trim().startsWith("cd")) //check to see if the user wants to change their directory
                     driver.setCwd(input);
-                else if (input.toLowerCase().startsWith("pwd")) //tell console to print the current working directory
+                else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
                     driver.printWorkingDirectory();
-                else if (input.toLowerCase().startsWith("cat"))
+                else if (input.toLowerCase().trim().startsWith("cat"))
                     driver.runCat(input);
-                else if (input.toLowerCase().startsWith("grep"))
+                else if (input.toLowerCase().trim().startsWith("grep"))
                     driver.runGrep();
-                else if (input.toLowerCase().startsWith("analyze"))
+                else if (input.toLowerCase().trim().startsWith("analyze"))
                     driver.runAnalyzer(input);
-                else if (input.toLowerCase().startsWith("ls"))
+                else if (input.toLowerCase().trim().startsWith("ls"))
                     driver.ls(input);
+                else if (input.toLowerCase().trim().startsWith("help"))
+                    driver.help(input);
                 else driver.runOther(input);
             }
         } catch (InvalidPathException | FileNotFoundException ex) {

@@ -10,6 +10,8 @@ public class analyzer {
 
     public static void runAnalyzer(String path) {
         try {
+
+            //Files.lines(Paths.get(path)).map(it -> it.split(" ")).forEach(it -> new TreeMap<String, Integer>().put(Arrays.toString(it), ((int) Arrays.stream(it).count())));
             TreeMap<String, Integer> termMap = (TreeMap<String, Integer>) getTerms(path);
             System.out.println("Term : Occurrences");
             Set<String> keys = termMap.keySet();
