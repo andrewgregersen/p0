@@ -3,9 +3,9 @@ package domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,7 +85,7 @@ public class SHDriver {
 
 
         Path path = Paths.get(cwd).toAbsolutePath().normalize();
-        String[] frags = s.replaceAll("\\\\", "/").split("/");
+        String[] frags = s.replaceAll("\\\\", "/").replaceAll("\"", "").trim().split("/");
         StringBuilder builder = new StringBuilder();
         boolean ok = true;
 
@@ -179,22 +179,16 @@ public class SHDriver {
      *
      * @param input: user given path
      */
-    public void ls(String input) throws InvalidPathException, NullPointerException {
+    public void ls(String input) throws InvalidPathException, NullPointerException, IOException {
         if (input.strip().length() == 2) { //the user only passed in the chars "ls"
             Path cwd = Paths.get(this.cwd);
-            File[] f = cwd.toFile().listFiles();
-            assert f != null;
-            for (File file : f) {
-                System.out.println(file.getName());
-            }
+            Files.list(cwd.toAbsolutePath().normalize()).forEach(System.out::println);
         } else { //prints out the files in specified directory
             input = input.replace("ls", "").strip();
-            String path = input.replaceAll("\"", ""); //remove all '"' from new path
-            File[] wd = Paths.get(path).toAbsolutePath().normalize().toFile().listFiles();
-            assert wd != null;
-            for (File a : wd) {
-                System.out.println(a);
-            }
+            String path = pathBuilder(input);
+            if (pathExists(path)) {
+                Files.list(Paths.get(path).toAbsolutePath().normalize()).forEach(System.out::println);
+            } else throw new FileNotFoundException("The File does not exist!");
         }
     }
 
@@ -203,10 +197,37 @@ public class SHDriver {
      */
 
     public void help(String input) {
-        if (input.length() == 4) {
-
+        log.info("In help");
+        if (input.trim().length() == 4) { //default case
+            System.out.println("cd: Used to change the working directory.");
+            System.out.println("pwd: Prints the current working directory.");
+            System.out.println("ls: Prints the children of a given file.");
+            System.out.println("help: Prints this message.");
+            System.out.println("exit: Exits the shell.");
+            System.out.println("clear: \"Clears\" the console.");
+            System.out.println("cat: Prints a document to the command line.");
+            System.out.println("grep: Searches and prints a document to the command line.");
+            System.out.println("analyze: Preforms a lexical analysis on a document, prints to the command line.");
+        } else {
+            input = input.replace("help", "").trim();
+            if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
+                System.out.println("exit: Exits the shell.");
+            else if (input.toLowerCase().trim().startsWith("cd")) //check to see if the user wants to change their directory
+                System.out.println("Usage: [path] -> path to new working directory ");
+            else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
+                System.out.println("pwd: Prints the current working directory.");
+            else if (input.toLowerCase().trim().startsWith("cat")) //print out a document to console
+                System.out.println("Usage: [path] -> path to file");
+            else if (input.toLowerCase().trim().startsWith("grep")) //launch the grep ui
+                System.out.println("Just run the command, it has a UI to make it work.");
+            else if (input.toLowerCase().trim().startsWith("analyze"))//analyze a document via lexical breakdown
+                System.out.println("Usage: [path] -> path to document to break down");
+            else if (input.toLowerCase().trim().startsWith("ls")) //print the children of the current directory
+                System.out.println("Usage: [path] -> Path to directory, cwd by default");
+            else if (input.toLowerCase().trim().startsWith("clear"))//clear the console
+                System.out.println("clear: \"Clears\" the console.");
         }
-        input = input.replace("ls", "").strip();
+
     }
 
 
@@ -225,15 +246,23 @@ public class SHDriver {
             pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             log.info("Starting External Command");
             Process process = pb.start();
-            while (process.isAlive()) {
+            //Thread waitThread = new Thread(systemFlush(this);
+            while (process.isAlive()) { //make this a new thread to keep tack of the system
                 System.out.flush();
                 System.err.flush();
             }
+
+
         } catch (IllegalArgumentException | IOException e) {
             log.error(e.getMessage(), e.getCause());
+            System.err.println("A problem occurred..." + e.getMessage());
         }
 
     }
+
+//    private void systemFlush(Thread thread) {
+//        while
+//    }
 
 
 }

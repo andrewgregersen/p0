@@ -29,7 +29,9 @@ public class ASH {
                 log.info("Waiting for user input");
                 System.out.print("$:> ");
                 input = stdin.readLine();
-                if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
+                if (input.isBlank())
+                    continue;
+                else if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
                     break;
                 else if (input.toLowerCase().trim().startsWith("cd")) //check to see if the user wants to change their directory
                     driver.changeCwd(input);
