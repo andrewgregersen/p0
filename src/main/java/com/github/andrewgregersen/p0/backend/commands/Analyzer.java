@@ -1,4 +1,4 @@
-package domain;
+package com.github.andrewgregersen.p0.backend.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class Analyzer {
-    
+
     private static final Logger log = LoggerFactory.getLogger(Analyzer.class);
 
     public static void runAnalyzer(String path) {

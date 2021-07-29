@@ -1,4 +1,4 @@
-package domain;
+package com.github.andrewgregersen.p0.backend.commands;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -6,9 +6,9 @@ exercise in I/O from and to file system by a custom user script.
 ## Actors & Features
 
 - A User can:
-    - Specify which search for programs included in the shell
+    - Search for programs included in the shell and run them
     - Run commands not included in the shell like normal
-    - Change working directory and print it at will
+    - Change working directory and print it out at will
     - Print files located in CWD
 
 - The Application can:

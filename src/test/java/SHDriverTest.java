@@ -1,8 +1,9 @@
-import domain.SHDriver;
+import com.github.andrewgregersen.p0.backend.SHDriver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SHDriverTest {
@@ -29,20 +30,20 @@ public class SHDriverTest {
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
         Assert.assertEquals(expected, actual);
     }
-
+    
     @Test
     public void changeDirectoryTest3() throws IllegalArgumentException {
-        String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
+        Path expected = Paths.get(System.getProperty("user.dir")).getParent().getParent().normalize();
         driver.changeCwd("../../");
-        String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
+        Path actual = Paths.get(System.getProperty("user.dir")).normalize();
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void changeDirectoryTest4() throws IllegalArgumentException {
-        String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
+        Path expected = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
         driver.changeCwd("../p0/");
-        String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
+        Path actual = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
         Assert.assertEquals(expected, actual);
     }
 
