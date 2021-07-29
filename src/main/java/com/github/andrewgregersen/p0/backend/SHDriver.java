@@ -2,8 +2,6 @@ package com.github.andrewgregersen.p0.backend;
 
 import com.github.andrewgregersen.p0.backend.commands.Analyzer;
 import com.github.andrewgregersen.p0.backend.commands.DocumentMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,7 +14,8 @@ import java.util.Scanner;
 public class SHDriver {
 
     private String cwd;
-    private static final Logger log = LoggerFactory.getLogger(SHDriver.class);
+    private static final Log log = Log.of(SHDriver.class);
+
 
     /**
      * Creates an instance of the Shell in memory, only have to init the current working directory from the system
@@ -53,7 +52,7 @@ public class SHDriver {
      * @param input: The users input, contains the keyword CD, and a path to a new working directory
      * @throws IllegalArgumentException: An exception that shows simply shows the usage of the command.
      */
-    public void changeCwd(String input) throws IllegalArgumentException {
+    public void changeCwd(String input) throws IllegalArgumentException, IOException {
         input = input.replace("cd", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
             throw new IllegalArgumentException("Usage: [path] -> path to new working directory");
@@ -66,8 +65,8 @@ public class SHDriver {
             System.out.println("Moved from " + old + " to-> " + updateCWD()); //print out the change in working directory
 //            }
         } catch (InvalidPathException ex) {
-            log.error("ASH: Path was mangled/malformed!");
-            log.error(ex.getMessage());
+            log.error("ASH: Path was mangled/malformed!", ex.getCause());
+            log.error(ex.getMessage(), ex.getCause());
             System.err.println(ex.getMessage());
         }
     }
@@ -114,7 +113,7 @@ public class SHDriver {
      * @throws FileNotFoundException:    The file either does not exist or is not located at this location.
      */
 
-    public void runAnalyzer(String input) throws IllegalArgumentException, FileNotFoundException {
+    public void runAnalyzer(String input) throws IllegalArgumentException, IOException {
         input = input.replace("analyze", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
             throw new IllegalArgumentException("Usage: [path] -> path to document to break down");
@@ -140,7 +139,7 @@ public class SHDriver {
      *
      * @param input read from command line
      */
-    public void runOther(String input) {
+    public void runOther(String input) throws IOException {
         try {
             String[] command = input.trim().split(" ");
             log.info("Building external command");
@@ -162,6 +161,15 @@ public class SHDriver {
             System.err.println("A problem occurred..." + e.getMessage());
             System.out.println();
         }
+
+    }
+
+    /**
+     * Runs a user defined command, read from text file.
+     *
+     * @param command
+     */
+    public void run(String command) {
 
     }
 

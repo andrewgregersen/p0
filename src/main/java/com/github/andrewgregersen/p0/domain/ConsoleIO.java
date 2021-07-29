@@ -1,20 +1,22 @@
 package com.github.andrewgregersen.p0.domain;
 
+import com.github.andrewgregersen.p0.backend.Log;
 import com.github.andrewgregersen.p0.backend.SHDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class ConsoleIO {
-    private static final Logger log = LoggerFactory.getLogger(ConsoleIO.class);
+    private static final Log log = Log.of(ConsoleIO.class);
 
     public static void parseInput(String input, SHDriver driver) throws IOException {
-        if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
+        if (input.toLowerCase().trim().startsWith("exit")) {//check to see if the user wants to exit the shell
+            log.debug("Shutting down");
             System.exit(0);
-        else if (input.toLowerCase().trim().startsWith("cd")) //check to see if the user wants to change their directory
+        } else if (input.toLowerCase().trim().startsWith("cd")) {//check to see if the user wants to change their directory
+            log.debug("Changing Directory");
+
             driver.changeCwd(input);
-        else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
+        } else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
             driver.printWorkingDirectory();
         else if (input.toLowerCase().trim().startsWith("cat")) //print out a document to console
             driver.runCat(input);
@@ -35,7 +37,7 @@ public class ConsoleIO {
      * Static command help, simply gives a brief list of commands that are built into the system.
      */
 
-    public static void help(String input) {
+    public static void help(String input) throws IOException {
         log.info("In help");
         if (input.trim().length() == 4) { //default case
             System.out.println("cd: Used to change the working directory.");
@@ -76,5 +78,6 @@ public class ConsoleIO {
         for (int i = 0; i < 30; i++)
             System.out.println("\u001b[0m");
     }
+
 
 }

@@ -1,8 +1,7 @@
 package com.github.andrewgregersen.p0.domain;
 
+import com.github.andrewgregersen.p0.backend.Log;
 import com.github.andrewgregersen.p0.backend.SHDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -20,10 +19,10 @@ import static com.github.andrewgregersen.p0.domain.ConsoleIO.parseInput;
 public class ASH {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Logger log = LoggerFactory.getLogger(ASH.class);
-        log.info("Starting driver");
+        Log log = Log.of(ASH.class);
+        log.debug("Starting driver");
         String input;
         SHDriver driver = new SHDriver();
         try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in))) {

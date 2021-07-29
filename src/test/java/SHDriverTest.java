@@ -3,6 +3,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -16,7 +17,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest1() throws IllegalArgumentException {
+    public void changeDirectoryTest1() throws IllegalArgumentException, IOException {
         String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.changeCwd(expected);
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
@@ -24,15 +25,15 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest2() throws IllegalArgumentException {
+    public void changeDirectoryTest2() throws IllegalArgumentException, IOException {
         String expected = Paths.get(System.getProperty("user.dir")).getParent().normalize().toString();
         driver.changeCwd("../");
         String actual = Paths.get(System.getProperty("user.dir")).normalize().toString();
         Assert.assertEquals(expected, actual);
     }
-    
+
     @Test
-    public void changeDirectoryTest3() throws IllegalArgumentException {
+    public void changeDirectoryTest3() throws IllegalArgumentException, IOException {
         Path expected = Paths.get(System.getProperty("user.dir")).getParent().getParent().normalize();
         driver.changeCwd("../../");
         Path actual = Paths.get(System.getProperty("user.dir")).normalize();
@@ -40,7 +41,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest4() throws IllegalArgumentException {
+    public void changeDirectoryTest4() throws IllegalArgumentException, IOException {
         Path expected = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
         driver.changeCwd("../p0/");
         Path actual = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
@@ -48,7 +49,7 @@ public class SHDriverTest {
     }
 
     @Test
-    public void changeDirectoryTest5() throws IllegalArgumentException {
+    public void changeDirectoryTest5() throws IllegalArgumentException, IOException {
         String expected = Paths.get(System.getProperty("user.home")).normalize().toString();
         driver.changeCwd("~");
         String actual = Paths.get(System.getProperty("user.home")).normalize().toString();
