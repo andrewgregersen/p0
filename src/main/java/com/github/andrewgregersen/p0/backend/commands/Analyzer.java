@@ -1,3 +1,8 @@
+package com.github.andrewgregersen.p0.backend.commands;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -6,11 +11,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class analyzer {
+public class Analyzer {
+
+    private static final Logger log = LoggerFactory.getLogger(Analyzer.class);
 
     public static void runAnalyzer(String path) {
         try {
-
+            log.info("Starting analyzer...");
             //Files.lines(Paths.get(path)).map(it -> it.split(" ")).forEach(it -> new TreeMap<String, Integer>().put(Arrays.toString(it), ((int) Arrays.stream(it).count())));
             TreeMap<String, Integer> termMap = (TreeMap<String, Integer>) getTerms(path);
             System.out.println("Term : Occurrences");
@@ -20,7 +27,7 @@ public class analyzer {
                     System.out.println(key + " : " + termMap.get(key));
             }
         } catch (IOException ex) {
-            System.out.println("Something went wrong " + ex.getMessage());
+            log.error("Something went wrong " + ex.getMessage());
         }
 
     }
@@ -31,6 +38,7 @@ public class analyzer {
      * @throws IOException The file does not exist or an error occurs in reading the file
      */
     private static Map<String, Integer> getTerms(String path) throws IOException {
+        log.info("Parsing file");
         File file = new File(path);
         BufferedReader fileReader = new BufferedReader(new FileReader(file));
         Map<String, Integer> termMap = new TreeMap<>();
