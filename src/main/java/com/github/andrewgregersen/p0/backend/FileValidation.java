@@ -1,10 +1,13 @@
 package com.github.andrewgregersen.p0.backend;
 
+import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class FileValidation {
+
+    private static final Log log = Log.of(FileValidation.class);
 
     /**
      * @param s:   The path to the new Working Directory.
@@ -14,7 +17,7 @@ public class FileValidation {
      * @throws InvalidPathException: The path passed by the user is trying to access a parent of a child they are asking of
      */
 
-    protected static String pathBuilder(String s, String cwd) throws InvalidPathException {
+    protected static String pathBuilder(String s, String cwd) throws InvalidPathException, IOException {
         //if the path is just a reference to the parent directory, return the parent.
         if (s.equalsIgnoreCase("../"))
             return getParent(cwd).toString(); //user just wants the parent directory
@@ -36,8 +39,10 @@ public class FileValidation {
                 } else if (ok) { //there is no more ../ in the path
                     ok = false;
                     builder.append(path.toString()).append("\\");
-                } else if (f.equals("../"))//some one was being cheeky
+                } else if (f.equals("..")) {//some one was being cheeky
+                    log.error("Had ../ in the middle of a path");
                     throw new InvalidPathException(f, "You had ../ in the middle of a path!");
+                }
                 builder.append(f.trim()).append("\\"); //otherwise just keep making the new path
             }
         }
@@ -72,11 +77,25 @@ public class FileValidation {
 
     //returns the parent of a path.
 
-    private static Path getParent(Path path) {
-        return path.getParent().toAbsolutePath().normalize();
+    private static Path getParent(Path path) throws IOException {
+        Path temp;
+        try { //check to see if you are trying to access a folder above the drive header.
+            temp = path.getParent().toAbsolutePath().normalize();
+        } catch (NullPointerException ex) { //if you are, just return the current path and continue, if it breaks after this its on you
+            log.error("Cannot access directory or it does not exist!");
+            return path;
+        }
+        return temp;
     }
 
-    private static Path getParent(String path) {
-        return Paths.get(path).getParent().toAbsolutePath().normalize();
+    private static Path getParent(String path) throws IOException {
+        Path temp;
+        try { //check to see if you are trying to access a folder above the drive header.
+            temp = Paths.get(path).getParent().toAbsolutePath().normalize();
+        } catch (NullPointerException ex) {
+            log.error("Cannot access directory or it does not exist!");
+            return Paths.get(path);
+        }
+        return temp;
     }
 }

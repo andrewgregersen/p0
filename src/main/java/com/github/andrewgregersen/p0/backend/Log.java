@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class Log {
     private final Class<?> aClass;
@@ -14,9 +14,8 @@ public class Log {
     private static final BufferedWriter writer = initWriter();
 
     private static BufferedWriter initWriter() {
-        BufferedWriter temp;
         try {
-            return new BufferedWriter(new FileWriter("log.txt"));
+            return new BufferedWriter(new FileWriter(Paths.get("log.txt").toFile()));
         } catch (IOException ex) {
             Logger logger = LoggerFactory.getLogger(Log.class);
             logger.error("Failed to read log.txt" + ex.getMessage());
@@ -56,8 +55,6 @@ public class Log {
     }
 
     private static void output(String message) throws IOException {
-        File file = new File("log.txt");
-        file.createNewFile();
         writer.append(message).append("\n");
         writer.flush();
     }

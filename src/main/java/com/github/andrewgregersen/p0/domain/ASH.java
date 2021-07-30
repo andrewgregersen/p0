@@ -42,6 +42,8 @@ public class ASH {
             log.error(String.valueOf(e.fillInStackTrace()));
         }
 
+        log.debug("----END OF SESSION----");
+
 
     }
 

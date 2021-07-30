@@ -3,7 +3,6 @@ package com.github.andrewgregersen.p0.backend;
 import com.github.andrewgregersen.p0.backend.commands.Analyzer;
 import com.github.andrewgregersen.p0.backend.commands.DocumentMethods;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -58,12 +57,9 @@ public class SHDriver {
             throw new IllegalArgumentException("Usage: [path] -> path to new working directory");
         try {
             String path = FileValidation.pathBuilder(input, cwd);
-//            if (!pathExists(path)) //make sure that the file actually exists and is a directory.
-//                throw new FileNotFoundException();
-//            else {
             String old = System.setProperty("user.dir", path);
             System.out.println("Moved from " + old + " to-> " + updateCWD()); //print out the change in working directory
-//            }
+            log.debug("Moved from " + old + "to" + cwd);
         } catch (InvalidPathException ex) {
             log.error("ASH: Path was mangled/malformed!", ex.getCause());
             log.error(ex.getMessage(), ex.getCause());
@@ -76,10 +72,10 @@ public class SHDriver {
      * Cat is a small script that prints a document out to the console a handfull of lines at a time.
      *
      * @param input: The path to the document to read from.
-     * @throws FileNotFoundException:    The File does not exist or the path was mangled
+     * @throws IOException:              The File does not exist or the path was mangled
      * @throws IllegalArgumentException: The command was not called correctly in the console
      */
-    public void runCat(String input) throws FileNotFoundException, IllegalArgumentException {
+    public void runCat(String input) throws IOException, IllegalArgumentException {
         input = input.replace("cat", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
             throw new IllegalArgumentException("Usage: [path] -> path to file");
@@ -90,9 +86,9 @@ public class SHDriver {
      * Grep is small script that searches for and prints out all occurrences of a given phrase or search term.
      *
      * @throws IllegalArgumentException: An error to show the usage of a the command
-     * @throws FileNotFoundException:    The file that we are trying to search does not exist.
+     * @throws IOException:              The file that we are trying to search does not exist or something else went wrong.
      */
-    public void runGrep() throws IllegalArgumentException, FileNotFoundException {
+    public void runGrep() throws IllegalArgumentException, IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Please enter file pathway: ");
         String path = scanner.nextLine();
@@ -110,7 +106,7 @@ public class SHDriver {
      *
      * @param input: The path to the document to breakdown
      * @throws IllegalArgumentException: An exception to show how to use the command
-     * @throws FileNotFoundException:    The file either does not exist or is not located at this location.
+     * @throws IOException:              The file either does not exist or is not located at this location.
      */
 
     public void runAnalyzer(String input) throws IllegalArgumentException, IOException {

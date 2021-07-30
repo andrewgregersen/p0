@@ -57,5 +57,30 @@ public class SHDriverTest {
 
     }
 
+    @Test
+    public void changeDirectoryTest6() throws IOException {
+        Path expected = Paths.get("A:\\").toAbsolutePath().normalize();
+        driver.changeCwd("A:/");
+        Path actual = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void changeDirectoryTest7() throws IOException {
+        Path expected = Paths.get("A:\\Testing").toAbsolutePath().normalize();
+        driver.changeCwd("A:/Testing");
+        Path actual = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void changeDirectoryTest8() throws IOException {
+        Path expected = Paths.get("A:\\Testing").toAbsolutePath().normalize();
+        driver.changeCwd("A:/");
+        driver.changeCwd("Testing");
+        Path actual = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize();
+        Assert.assertEquals(expected, actual);
+    }
+
 
 }
