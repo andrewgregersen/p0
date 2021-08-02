@@ -1,11 +1,12 @@
 package com.github.andrewgregersen.p0.backend;
 
+
 import com.github.andrewgregersen.p0.backend.commands.Analyzer;
 import com.github.andrewgregersen.p0.backend.commands.DocumentMethods;
+import com.github.andrewgregersen.p0.interfaces.DriverInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -13,10 +14,12 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 
-public class SHDriver {
+public class SHDriver implements DriverInterface {
 
     private String cwd;
-    private static final Logger log = LoggerFactory.getLogger(SHDriver.class);
+    private static final Logger log = LoggerFactory.getLogger("logger.Driver");
+    private static final FileValidation fileValidator = new FileValidation();
+
 
     /**
      * Creates an instance of the Shell in memory, only have to init the current working directory from the system
@@ -26,23 +29,17 @@ public class SHDriver {
         this.cwd = getWorkingDirectory();
     }
 
-    private String getWorkingDirectory() {
-        return System.getProperty("user.dir");
-    }
 
-
-    /**
-     * Updates the current working directory to the new one
-     *
-     * @return: The new Working directory
-     */
-    private String updateCWD() {
+    @Override
+    public String updateCWD() {
         return this.cwd = System.getProperty("user.dir");
     }
+
 
     /**
      * Prints the current working directory
      */
+    @Override
     public void printWorkingDirectory() {
         System.out.println(this.cwd);
     }
@@ -53,21 +50,19 @@ public class SHDriver {
      * @param input: The users input, contains the keyword CD, and a path to a new working directory
      * @throws IllegalArgumentException: An exception that shows simply shows the usage of the command.
      */
-    public void changeCwd(String input) throws IllegalArgumentException {
+    @Override
+    public void changeCwd(String input) throws IllegalArgumentException, IOException {
         input = input.replace("cd", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
             throw new IllegalArgumentException("Usage: [path] -> path to new working directory");
         try {
-            String path = FileValidation.pathBuilder(input, cwd);
-//            if (!pathExists(path)) //make sure that the file actually exists and is a directory.
-//                throw new FileNotFoundException();
-//            else {
+            String path = fileValidator.pathBuilder(input, cwd);
             String old = System.setProperty("user.dir", path);
             System.out.println("Moved from " + old + " to-> " + updateCWD()); //print out the change in working directory
-//            }
+            log.debug("Moved from " + old + " to " + cwd);
         } catch (InvalidPathException ex) {
-            log.error("ASH: Path was mangled/malformed!");
-            log.error(ex.getMessage());
+            log.error("ASH: Path was mangled/malformed!", ex.getCause());
+            log.error(ex.getMessage(), ex.getCause());
             System.err.println(ex.getMessage());
         }
     }
@@ -77,23 +72,25 @@ public class SHDriver {
      * Cat is a small script that prints a document out to the console a handfull of lines at a time.
      *
      * @param input: The path to the document to read from.
-     * @throws FileNotFoundException:    The File does not exist or the path was mangled
+     * @throws IOException:              The File does not exist or the path was mangled
      * @throws IllegalArgumentException: The command was not called correctly in the console
      */
-    public void runCat(String input) throws FileNotFoundException, IllegalArgumentException {
+    @Override
+    public void runCat(String input) throws IOException, IllegalArgumentException {
         input = input.replace("cat", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
             throw new IllegalArgumentException("Usage: [path] -> path to file");
-        DocumentMethods.cat(FileValidation.pathBuilder(input, this.cwd));
+        DocumentMethods.cat(fileValidator.pathBuilder(input, this.cwd));
     }
 
     /**
      * Grep is small script that searches for and prints out all occurrences of a given phrase or search term.
      *
      * @throws IllegalArgumentException: An error to show the usage of a the command
-     * @throws FileNotFoundException:    The file that we are trying to search does not exist.
+     * @throws IOException:              The file that we are trying to search does not exist or something else went wrong.
      */
-    public void runGrep() throws IllegalArgumentException, FileNotFoundException {
+    @Override
+    public void runGrep() throws IllegalArgumentException, IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Please enter file pathway: ");
         String path = scanner.nextLine();
@@ -102,7 +99,7 @@ public class SHDriver {
         System.out.print("Case Sensitive? Y/N: ");
         boolean sensitive;
         sensitive = scanner.nextLine().equalsIgnoreCase("y");
-        DocumentMethods.grep(FileValidation.pathBuilder(path, cwd), term, sensitive);
+        DocumentMethods.grep(fileValidator.pathBuilder(path, cwd), term, sensitive);
     }
 
     /**
@@ -111,14 +108,15 @@ public class SHDriver {
      *
      * @param input: The path to the document to breakdown
      * @throws IllegalArgumentException: An exception to show how to use the command
-     * @throws FileNotFoundException:    The file either does not exist or is not located at this location.
+     * @throws IOException:              The file either does not exist or is not located at this location.
      */
 
-    public void runAnalyzer(String input) throws IllegalArgumentException, FileNotFoundException {
+    @Override
+    public void runAnalyzer(String input) throws IllegalArgumentException, IOException {
         input = input.replace("analyze", "").strip().replaceAll("\"", "").strip();
         if (input.length() == 0)
             throw new IllegalArgumentException("Usage: [path] -> path to document to break down");
-        Analyzer.runAnalyzer(FileValidation.pathBuilder(input, cwd));
+        Analyzer.runAnalyzer(fileValidator.pathBuilder(input, cwd));
     }
 
     /**
@@ -126,21 +124,25 @@ public class SHDriver {
      *
      * @param input: user given path
      */
+    @Override
     public void ls(String input) throws InvalidPathException, NullPointerException, IOException {
         if (input.strip().length() == 2) { //the user only passed in the chars "ls"
             Files.list(Paths.get(this.cwd).toAbsolutePath().normalize()).forEach(System.out::println);
         } else { //prints out the files in specified directory
-            Files.list(Paths.get(FileValidation.pathBuilder(input.replace("ls", "").strip(), cwd)).toAbsolutePath().normalize()).forEach(System.out::println);
+            Files.list(Paths.get(fileValidator.pathBuilder(input.replace("ls", "").
+                    strip(), cwd)).toAbsolutePath().normalize()).forEach(System.out::println);
         }
     }
 
 
     /**
-     * Tells the computer OS to run a user-defined program with all vars attached to it
+     * Tells the computer OS to run a user-defined program with all vars attached to it.
+     * Should be upgraded to use threads
      *
      * @param input read from command line
      */
-    public void runOther(String input) {
+    @Override
+    public void runOther(String input) throws IOException {
         try {
             String[] command = input.trim().split(" ");
             log.info("Building external command");
@@ -164,10 +166,6 @@ public class SHDriver {
         }
 
     }
-
-//    private void systemFlush(Thread thread) {
-//        while
-//    }
 
 
 }

@@ -1,20 +1,29 @@
 package com.github.andrewgregersen.p0.domain;
 
 import com.github.andrewgregersen.p0.backend.SHDriver;
+import com.github.andrewgregersen.p0.interfaces.ConsoleIOInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class ConsoleIO {
-    private static final Logger log = LoggerFactory.getLogger(ConsoleIO.class);
+public class ConsoleIO implements ConsoleIOInterface {
+    private static final Logger log = LoggerFactory.getLogger("logger.IO");
+    private static final SHDriver driver = new SHDriver();
 
-    public static void parseInput(String input, SHDriver driver) throws IOException {
-        if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
+
+    public ConsoleIO() {
+    }
+
+    public void parseInput(String input) throws IOException, IllegalArgumentException, InterruptedException {
+        if (input.toLowerCase().trim().startsWith("exit")) {//check to see if the user wants to exit the shell
+            log.debug("----END OF SESSION----");
             System.exit(0);
-        else if (input.toLowerCase().trim().startsWith("cd")) //check to see if the user wants to change their directory
+        } else if (input.toLowerCase().trim().startsWith("cd")) {//check to see if the user wants to change their directory
+            log.debug("Changing Directory");
+
             driver.changeCwd(input);
-        else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
+        } else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
             driver.printWorkingDirectory();
         else if (input.toLowerCase().trim().startsWith("cat")) //print out a document to console
             driver.runCat(input);
@@ -25,9 +34,9 @@ public class ConsoleIO {
         else if (input.toLowerCase().trim().startsWith("ls")) //print the children of the current directory
             driver.ls(input);
         else if (input.toLowerCase().trim().startsWith("help"))//show usage cases for each command
-            ConsoleIO.help(input);
+            help(input);
         else if (input.toLowerCase().trim().startsWith("clear"))//clear the console
-            ConsoleIO.clearConsole();
+            clearConsole();
         else driver.runOther(input); //launch another program from console.
     }
 
@@ -35,7 +44,7 @@ public class ConsoleIO {
      * Static command help, simply gives a brief list of commands that are built into the system.
      */
 
-    public static void help(String input) {
+    public void help(String input) throws IOException, InterruptedException {
         log.info("In help");
         if (input.trim().length() == 4) { //default case
             System.out.println("cd: Used to change the working directory.");
@@ -48,9 +57,17 @@ public class ConsoleIO {
             System.out.println("grep: Searches and prints a document to the command line.");
             System.out.println("analyze: Preforms a lexical analysis on a document, prints to the command line.");
         } else {
-            input = input.replace("help", "").trim();
-            if (input.toLowerCase().trim().startsWith("exit"))//check to see if the user wants to exit the shell
-                System.out.println("exit: Exits the shell.");
+            input = input.replaceFirst("help", "").trim();
+            if (input.toLowerCase().trim().startsWith("exit")) {//check to see if the user wants to exit the shell
+                System.out.println("exit: Exits the shell...");
+                Thread.sleep(1000);
+                System.out.println("Like so.");
+                log.info("User wanted to know what exit did!");
+                System.exit(1);
+
+            }
+            if (input.toLowerCase().trim().startsWith("help"))//check to see if the user wants to exit the shell
+                System.out.println("help: Prints the usage statements of commands.");
             else if (input.toLowerCase().trim().startsWith("cd")) //check to see if the user wants to change their directory
                 System.out.println("Usage: [path] -> path to new working directory ");
             else if (input.toLowerCase().trim().startsWith("pwd")) //tell console to print the current working directory
@@ -72,9 +89,10 @@ public class ConsoleIO {
     /**
      * "Clears" the users console by printing 30 lines of blank text
      */
-    public static void clearConsole() {
+    public void clearConsole() {
         for (int i = 0; i < 30; i++)
             System.out.println("\u001b[0m");
     }
+
 
 }
