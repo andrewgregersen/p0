@@ -25,24 +25,28 @@ public class ASH {
         log.debug("Starting driver");
         String input;
         SHDriver driver = new SHDriver();
-        try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in))) {
-            while (true) { //have the program run until the user exits the shell
+        BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+        while (true) {
+            try {
+                //have the program run until the user exits the shell
                 log.info("Waiting for user input");
                 System.out.print("$:> ");
                 input = stdin.readLine();
                 if (!input.isBlank()) {
                     parseInput(input, driver);
                 }
-            }
-        } catch (InvalidPathException | FileNotFoundException ex) {
-            log.error("Something went wrong: " + ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            log.error(ex.getMessage());
-        } catch (IOException e) {
-            log.error(String.valueOf(e.fillInStackTrace()));
-        }
 
-        log.debug("----END OF SESSION----");
+            } catch (InvalidPathException | FileNotFoundException ex) {
+                log.error("Something went wrong: " + ex.getMessage());
+            } catch (IllegalArgumentException ex) {
+                log.error(ex.getMessage());
+            } catch (IOException e) {
+                log.error(String.valueOf(e.fillInStackTrace()));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
 
 
     }

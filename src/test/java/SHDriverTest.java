@@ -1,6 +1,7 @@
 import com.github.andrewgregersen.p0.backend.SHDriver;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -10,10 +11,18 @@ import java.nio.file.Paths;
 public class SHDriverTest {
 
     SHDriver driver;
+    static String path;
+
+    @BeforeClass
+    public static void initPath() {
+        path = System.getProperty("user.dir");
+    }
+
 
     @Before
-    public void init() {
+    public void init() throws IOException {
         driver = new SHDriver();
+        driver.changeCwd(path);
     }
 
     @Test

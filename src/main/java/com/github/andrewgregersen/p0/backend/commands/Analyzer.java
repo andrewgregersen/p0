@@ -2,10 +2,10 @@ package com.github.andrewgregersen.p0.backend.commands;
 
 import com.github.andrewgregersen.p0.backend.Log;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -17,7 +17,6 @@ public class Analyzer {
     public static void runAnalyzer(String path) throws IOException {
         try {
             log.debug("Starting analyzer...");
-            //Files.lines(Paths.get(path)).map(it -> it.split(" ")).forEach(it -> new TreeMap<String, Integer>().put(Arrays.toString(it), ((int) Arrays.stream(it).count())));
             TreeMap<String, Integer> termMap = (TreeMap<String, Integer>) getTerms(path);
             System.out.println("Term : Occurrences");
             Set<String> keys = termMap.keySet();
@@ -38,18 +37,13 @@ public class Analyzer {
      */
     private static Map<String, Integer> getTerms(String path) throws IOException {
         log.debug("Parsing file");
-        File file = new File(path);
-        BufferedReader fileReader = new BufferedReader(new FileReader(file));
         Map<String, Integer> termMap = new TreeMap<>();
-        String temp;
-        while (fileReader.ready()) {
-            temp = fileReader.readLine();
-            for (String s : temp.split(" ")) {
-                if (termMap.putIfAbsent(s, 1) != null)
-                    termMap.put(s, termMap.get(s) + 1);
-            }
-        }
-        fileReader.close();
+        Files.lines(Paths.get(path)).forEach(it -> {
+            Arrays.stream(it.split(" ")).forEach(it1 -> {
+                if (termMap.putIfAbsent(it1, 1) != null)
+                    termMap.put(it1, termMap.get(it1) + 1);
+            });
+        });
         return termMap;
     }
 }
