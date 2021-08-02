@@ -2,13 +2,19 @@ package com.github.andrewgregersen.p0.domain;
 
 import com.github.andrewgregersen.p0.backend.Log;
 import com.github.andrewgregersen.p0.backend.SHDriver;
+import com.github.andrewgregersen.p0.interfaces.ConsoleIOInterface;
 
 import java.io.IOException;
 
-public class ConsoleIO {
+public class ConsoleIO implements ConsoleIOInterface {
     private static final Log log = Log.of(ConsoleIO.class);
+    private static final SHDriver driver = new SHDriver();
 
-    public static void parseInput(String input, SHDriver driver) throws IOException, IllegalArgumentException, InterruptedException {
+
+    public ConsoleIO() {
+    }
+
+    public void parseInput(String input) throws IOException, IllegalArgumentException, InterruptedException {
         if (input.toLowerCase().trim().startsWith("exit")) {//check to see if the user wants to exit the shell
             log.debug("----END OF SESSION----");
             System.exit(0);
@@ -27,9 +33,9 @@ public class ConsoleIO {
         else if (input.toLowerCase().trim().startsWith("ls")) //print the children of the current directory
             driver.ls(input);
         else if (input.toLowerCase().trim().startsWith("help"))//show usage cases for each command
-            ConsoleIO.help(input);
+            help(input);
         else if (input.toLowerCase().trim().startsWith("clear"))//clear the console
-            ConsoleIO.clearConsole();
+            clearConsole();
         else driver.runOther(input); //launch another program from console.
     }
 
@@ -37,7 +43,7 @@ public class ConsoleIO {
      * Static command help, simply gives a brief list of commands that are built into the system.
      */
 
-    public static void help(String input) throws IOException, InterruptedException {
+    public void help(String input) throws IOException, InterruptedException {
         log.info("In help");
         if (input.trim().length() == 4) { //default case
             System.out.println("cd: Used to change the working directory.");
@@ -82,7 +88,7 @@ public class ConsoleIO {
     /**
      * "Clears" the users console by printing 30 lines of blank text
      */
-    public static void clearConsole() {
+    public void clearConsole() {
         for (int i = 0; i < 30; i++)
             System.out.println("\u001b[0m");
     }

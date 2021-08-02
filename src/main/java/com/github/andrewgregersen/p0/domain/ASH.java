@@ -1,7 +1,6 @@
 package com.github.andrewgregersen.p0.domain;
 
 import com.github.andrewgregersen.p0.backend.Log;
-import com.github.andrewgregersen.p0.backend.SHDriver;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -9,23 +8,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.InvalidPathException;
 
-import static com.github.andrewgregersen.p0.domain.ConsoleIO.parseInput;
-
 
 /**
- * Main class to make the program. Uses threads for running the users commands and then waits for those commands to finish
- * before continuing.
+ * Main class to make the program. Used to access the ConsoleIO API
  */
 public class ASH {
 
+    private static final ConsoleIO console = new ConsoleIO();
+    private static final Log log = Log.of(ASH.class);
 
     public static void main(String[] args) throws IOException {
-
-        Log log = Log.of(ASH.class);
         log.debug("Starting driver");
-        String input;
-        SHDriver driver = new SHDriver();
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+        String input;
         while (true) {
             try {
                 //have the program run until the user exits the shell
@@ -33,7 +28,7 @@ public class ASH {
                 System.out.print("$:> ");
                 input = stdin.readLine();
                 if (!input.isBlank()) {
-                    parseInput(input, driver);
+                    console.parseInput(input);
                 }
 
             } catch (InvalidPathException | FileNotFoundException ex) {
