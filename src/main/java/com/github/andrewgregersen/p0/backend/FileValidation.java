@@ -1,5 +1,8 @@
 package com.github.andrewgregersen.p0.backend;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -7,7 +10,7 @@ import java.nio.file.Paths;
 
 public class FileValidation {
 
-    private static final Log log = Log.of(FileValidation.class);
+    private static final Logger log = LoggerFactory.getLogger("logger.IO.Validation");
 
 
     public FileValidation() {

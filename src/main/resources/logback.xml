@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration debug="true">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <!-- "application-name" is a variable -->
+        <File>events.log</File>
+        <encoder>
+            <Pattern>%d %p %t %c - %m%n</Pattern>
+        </encoder>
+    </appender>
+    <logger name="logger"/>
+    <logger name="logger.IO"/>
+    <logger name="logger.Driver"/>
+    <logger name="logger.Driver.Analyzer"/>
+    <logger name="logger.Driver.Doc"/>
+    <logger name="logger.IO.Validation"/>
+    <root level="debug">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

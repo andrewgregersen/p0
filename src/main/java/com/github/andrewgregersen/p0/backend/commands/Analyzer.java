@@ -1,6 +1,7 @@
 package com.github.andrewgregersen.p0.backend.commands;
 
-import com.github.andrewgregersen.p0.backend.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +13,7 @@ import java.util.TreeMap;
 
 public class Analyzer {
 
-    private static final Log log = Log.of(Analyzer.class);
+    private static final Logger log = LoggerFactory.getLogger("logger.Driver.Analyzer");
 
     public static void runAnalyzer(String path) throws IOException {
         try {

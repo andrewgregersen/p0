@@ -1,8 +1,11 @@
 package com.github.andrewgregersen.p0.backend;
 
+
 import com.github.andrewgregersen.p0.backend.commands.Analyzer;
 import com.github.andrewgregersen.p0.backend.commands.DocumentMethods;
 import com.github.andrewgregersen.p0.interfaces.DriverInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +17,7 @@ import java.util.Scanner;
 public class SHDriver implements DriverInterface {
 
     private String cwd;
-    private static final Log log = Log.of(SHDriver.class);
+    private static final Logger log = LoggerFactory.getLogger("logger.Driver");
     private static final FileValidation fileValidator = new FileValidation();
 
 
@@ -56,7 +59,7 @@ public class SHDriver implements DriverInterface {
             String path = fileValidator.pathBuilder(input, cwd);
             String old = System.setProperty("user.dir", path);
             System.out.println("Moved from " + old + " to-> " + updateCWD()); //print out the change in working directory
-            log.debug("Moved from " + old + "to" + cwd);
+            log.debug("Moved from " + old + " to " + cwd);
         } catch (InvalidPathException ex) {
             log.error("ASH: Path was mangled/malformed!", ex.getCause());
             log.error(ex.getMessage(), ex.getCause());

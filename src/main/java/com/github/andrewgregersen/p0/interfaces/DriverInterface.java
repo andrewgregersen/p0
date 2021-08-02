@@ -5,6 +5,12 @@ import java.nio.file.InvalidPathException;
 
 public interface DriverInterface {
 
+    /**
+     * A method to return the current working directory as per the JVM.
+     * Makes a system call.
+     *
+     * @return: The Current Directory that Java is working out of.
+     */
     default String getWorkingDirectory() {
         return System.getProperty("user.dir");
     }
