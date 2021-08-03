@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class ConsoleIO implements ConsoleIOInterface {
-    private static final Logger log = LoggerFactory.getLogger("logger.IO");
+    private static final Logger log = LoggerFactory.getLogger("logger.io");
     private static final SHDriver driver = new SHDriver();
 
 

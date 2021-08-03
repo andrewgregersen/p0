@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 public class Analyzer {
 
-    private static final Logger log = LoggerFactory.getLogger("logger.Driver.Analyzer");
+    private static final Logger log = LoggerFactory.getLogger("logger.driver.analyzer");
 
     public static void runAnalyzer(String path) throws IOException {
         try {

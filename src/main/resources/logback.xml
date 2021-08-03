@@ -8,11 +8,11 @@
         </encoder>
     </appender>
     <logger name="logger"/>
-    <logger name="logger.IO"/>
-    <logger name="logger.Driver"/>
-    <logger name="logger.Driver.Analyzer"/>
-    <logger name="logger.Driver.Doc"/>
-    <logger name="logger.IO.Validation"/>
+    <logger name="logger.io"/>
+    <logger name="logger.driver"/>
+    <logger name="logger.driver.analyzer"/>
+    <logger name="logger.driver.doc"/>
+    <logger name="logger.io.validation"/>
     <root level="debug">
         <appender-ref ref="FILE"/>
     </root>

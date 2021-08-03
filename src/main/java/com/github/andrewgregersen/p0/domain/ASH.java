@@ -20,7 +20,7 @@ public class ASH {
     private static final ConsoleIO console = new ConsoleIO();
     private static final Logger log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("logger");
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         log.debug("Starting driver");
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         String input;

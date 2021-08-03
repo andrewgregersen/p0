@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class SHDriver implements DriverInterface {
 
     private String cwd;
-    private static final Logger log = LoggerFactory.getLogger("logger.Driver");
+    private static final Logger log = LoggerFactory.getLogger("logger.driver");
     private static final FileValidation fileValidator = new FileValidation();
 
 

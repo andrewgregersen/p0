@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 public class FileValidation {
 
-    private static final Logger log = LoggerFactory.getLogger("logger.IO.Validation");
+    private static final Logger log = LoggerFactory.getLogger("logger.io.validation");
 
 
     public FileValidation() {
